@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 
 const port = 3000
@@ -30,13 +30,30 @@ async function run() {
             const result = await modelCollection.find().toArray()
             res.send(result)
         })
+        app.get('/products/:id', async (req, res) => {
+            const { id } = req.params;
+            // console.log(id);
+            const result = await modelCollection.findOne({ _id: new ObjectId(id) })
+            res.send(result)
 
+
+        })
         app.post('/products', async (req, res) => {
             const data = req.body;
             const result = await modelCollection.insertOne(data)
             // console.log(data);
             res.send(result)
 
+        })
+        app.patch('/products/:id', async (req, res) => {
+            const { id } = req.params;
+            const { availableQuantity } = req.body;
+            const result = await modelCollection.updateOne(
+                { _id: new ObjectId(id) },
+                {
+                    $set: { availableQuantity }
+                })
+            res.send(result)
         })
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
