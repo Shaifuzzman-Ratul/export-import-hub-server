@@ -26,6 +26,7 @@ async function run() {
         const db = client.db('trade-hub');
         const modelCollection = db.collection('products');
         const modelCollection2 = db.collection('exports')
+        const modelCollection3 = db.collection('imports')
 
         app.get('/products', async (req, res) => {
             const result = await modelCollection.find().toArray()
@@ -54,6 +55,18 @@ async function run() {
             // console.log(data);
             res.send(result)
         })
+
+        app.post('/imports', async (req, res) => {
+            const data = req.body;
+            const result = await modelCollection3.insertOne(data)
+            // console.log(data);
+            res.send(result)
+        })
+        app.get('/imports', async (req, res) => {
+            const result = await modelCollection3.find().toArray()
+            res.send(result)
+        })
+
         app.get('/exports', async (req, res) => {
             const result = await modelCollection2.find().toArray()
             res.send(result)
