@@ -25,6 +25,7 @@ async function run() {
 
         const db = client.db('trade-hub');
         const modelCollection = db.collection('products');
+        const modelCollection2 = db.collection('exports')
 
         app.get('/products', async (req, res) => {
             const result = await modelCollection.find().toArray()
@@ -44,6 +45,29 @@ async function run() {
             // console.log(data);
             res.send(result)
 
+
+
+        })
+        app.post('/exports', async (req, res) => {
+            const data = req.body;
+            const result = await modelCollection2.insertOne(data)
+            // console.log(data);
+            res.send(result)
+        })
+        app.get('/exports', async (req, res) => {
+            const result = await modelCollection2.find().toArray()
+            res.send(result)
+        })
+        app.put('/exports/:id', async (req, res) => {
+            const { id } = req.params
+            const data = req.body
+
+            const filter = { _id: new ObjectId(id) }
+            const update = {
+                $set: data
+            }
+            const result = await modelCollection2.updateOne(filter, update)
+            res.send(result)
         })
         app.patch('/products/:id', async (req, res) => {
             const { id } = req.params;
